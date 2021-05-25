@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active listings ({{ category }})</h2>
+        {% for auction in auctions %}
+            <div class="listing_box">
+                    {% if auction.url %}
+                        <div class="img_active">   
+                            <img src="{{ auction.url }}" alt="{{ auction.name }}" width="200">
+                        </div> 
+                    {% else %}
+                        <div class="img_active">   
+                            <img src="https://artsmidnorthcoast.com/wp-content/uploads/2014/05/no-image-available-icon-6.png" alt="{{ auction.name }}" width="200">
+                        </div>
+                    {% endif %} 
+                        <div class="items">
+                            <div class="name"><a href="{% url 'current_listing' auction.id %}"><strong>{{ auction.name }}</strong></a></div> 
+                            <div class="description">{{ auction.description }}</div>
+                            <div class="price">Starting price: ${{ auction.price }}</div>
+                            {% for bid in current_bid %}
+                                {% if auction.id == bid.id %}
+                                    {% if bid.max_bid %}
+                                        <div class="price">Current bid: ${{ bid.max_bid|floatformat:"-2" }}</div>
+                                    {% else %}
+                                        <div class="price">No bids made yet.</div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+            </div>
+        {% endfor %}
+{% endblock %}

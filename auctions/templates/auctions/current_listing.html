@@ -1,0 +1,126 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h3>Listings: {{ listing.name }}</h3>
+    <div class="flex_page">
+        <div class="left_side">
+            <form action="/listing/{{ listing.id }}" method="POST">   
+                {% csrf_token %}
+                <div class="watchlist_button">
+                        {% if watchlist %}
+                            <button name="Watchlist_delete" value="Watchlist_delete">Remove from watchlist</button>
+                        {% else %}
+                            <button name="Watchlist_add" value="Watchlist_add">Add to watchlist</button>
+                        {% endif %}
+                </div>
+            </form> 
+            {% if listing.url %}
+                <div class="img_listing">
+                    <img src="{{ listing.url }}" alt="{{ listing.name }}" width="400">
+                </div>
+            {% else %}
+                <div class="img_listing">   
+                    <img src="https://artsmidnorthcoast.com/wp-content/uploads/2014/05/no-image-available-icon-6.png" alt="{{ listing.name }}" width="400">
+                </div>
+            {% endif %}
+            <div class="description">{{ listing.description }}</div>
+            <div class="price"><strong>Starting price: ${{ listing.price }}</strong></div>
+            {% if bid_count is 1 %}
+                {% if listing.active %} 
+                    <div class="price"><strong>Current bid: ${{ current_bid }}</strong></div>
+                    {% if user == winner %} 
+                        <div class="bid">{{ bid_count }} bid so far. Your bid is the current bid.</div>
+                    {% else %}
+                        <div class="bid">{{ bid_count }} bid so far. <strong>{{ winner }}'s</strong> bid is the current bid.</div>
+                    {% endif %}
+                {% else %}
+                    <div class="price"><strong>Winning bid: ${{ current_bid }}</strong></div>
+                    <div class="bid">{{ bid_count }} bid was made.</div>
+                {% endif %}
+            
+            {% elif bid_count is 0 %}
+                {% if listing.active %}
+                    <div class="bid">{{ bid_count }} bids so far.</div>
+                {% else %}
+                    <div class="bid">{{ bid_count }} bids were made.</div>
+                {% endif %}
+            
+            {% else %}
+                {% if listing.active %}
+                    <div class="price"><strong>Current bid: ${{ current_bid }}</strong></div>
+                    {% if user == winner %} 
+                        <div class="bid">{{ bid_count }} bids so far. Your bid is the current bid.</div>
+                    {% else %}
+                        <div class="bid">{{ bid_count }} bids so far. <strong>{{ winner }}'s</strong> bid is the current bid.</div>
+                    {% endif %}
+                {% else %}
+                    <div class="price"><strong>Winning bid: ${{ current_bid }}</strong></div>
+                    <div class="bid">{{ bid_count }} bids were made.</div>
+                {% endif %}
+            {% endif %}
+            <div>
+                {% if listing.active %}
+                    <form action="/listing/{{ listing.id }}" method="POST">
+                        {% csrf_token %}
+                        {% if user == listing.user %}
+                            <div class="button_wrap">
+                                <button name="close" value="Close auction">Close auction</button>
+                            </div>
+                        {% else %}
+                            {% if bid_count == 0 %}
+                                <input type="number" name="min_price" placeholder="Bid" autocomplete="off" step="0.01" min="{{ price }}">
+                            {% else %}
+                                <input type="number" name="min_bid" placeholder="Bid" autocomplete="off" step="0.01" min="{{ min_bid }}">
+                            {% endif %}
+                            <div class="button_wrap">
+                                <button name="Bid_button" value="Place bid">Place bid</button>
+                            </div>
+                        {% endif %}
+                    </form>
+                {% else %}
+                    {% if winner == 0 %}
+                        <div class="description"><strong>This auction has been closed. No bidding was made.</strong></div>
+                    {% else %}
+                        {% if user == winner %}
+                            <div class="description"><strong>This auction has been closed. You are the winner of this auction. Congratulations!</strong></div>
+                        {% else %}
+                            <div class="description"><strong>This auction has been closed. The winner of the auction is {{ winner }}</strong></div>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="details">
+                <div>Details</div>
+                <div>
+                    <ul>
+                        <li>Listed by: {{ listing.user }}</li>
+                        {% if listing.category %}
+                            <li>Category: <a href="{% url 'category' listing.category %}">{{ listing.category|title }}</a></li>
+                        {% else %}
+                            <li>Category: No category listed</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="right_side">
+            <form action="/listing/{{ listing.id }}" method="POST">
+                {% csrf_token %}
+                    <div class="flex_box">   
+                        <div>{{ form }}</div>
+                        <div class="button_wrap">
+                            <button name="post" value="Post comment">Post comment</button>
+                        </div>
+                    </div>
+                </form>
+            <div class="comments">
+                <div><h4>Comments</h4></div>
+                <div class="msgboard">
+                    {% for comment in comments %}
+                    <p>{{ comment.user }}: {{ comment.comment }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

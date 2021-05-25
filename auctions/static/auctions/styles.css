@@ -1,0 +1,58 @@
+body {
+    padding: 10px;
+}
+
+.listing_box {
+    border: 1px solid lightslategray;
+    margin-bottom: 10px;
+    display: flex;
+}
+
+.name {
+    font-size: 20px;
+}
+
+.items {
+    margin-top: 10px;
+    margin-left: 100px;
+}
+
+.img_active {
+    margin: 10px;
+}
+
+.img_listing {
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+.bid, .price, .description {
+    margin-bottom: 15px;
+}
+
+.button_wrap {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.flex_page {
+    display: flex;
+    justify-content: space-between;
+}
+
+.right_side {
+    margin-right: 50px;
+}
+
+textarea {
+    resize: none;
+}
+
+.comments {
+    margin-top: 30px;
+}
+
+#id_name, #id_price, #id_description, #id_url, #id_category {
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
